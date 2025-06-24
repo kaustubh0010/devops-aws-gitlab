@@ -18,4 +18,4 @@ deploy_job:
     stage: deploy
     script: 
         - echo 'This is the deploy stage script on the $CI_COMMIT_BRANCH branch.'
-environment: dev
+    environment: dev
