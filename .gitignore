@@ -6,4 +6,3 @@ cypress*
 .dockerignore
 __pycache__
 out
-test_main.py
