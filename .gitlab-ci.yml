@@ -12,27 +12,27 @@ build_backend:
     script: 
         - echo "Building Backend Docker Image - Git SHA $CI_COMMIT_SHA"
         - docker build -t devops-assignment-backend:$CI_COMMIT_SHA backend/
-    # tags:
-    #     - dev-runner
+    tags:
+        - dev-runner
 
 build_frontend:
     stage: build
     script: 
         - echo "Building Frontend Docker Image - Git SHA $CI_COMMIT_SHA"
         - docker build -t devops-assignment-frontend:$CI_COMMIT_SHA frontend/
-    # tags:
-    #     - dev-runner
+    tags:
+        - dev-runner
 
 test_job:
     stage: test
     script: 
         - echo "This is the test stage script. Testing the docker image from $DOCKERHUB_USER user and pass $DOCKERHUB_PASS."
-    # tags:
-    #     - dev-runner
+    tags:
+        - dev-runner
 
 deploy_job:
     stage: deploy
     script: 
         - echo "This is the deploy stage script on $CI_COMMIT_BRANCH."
-    # tags:
-    #     - dev-runner
+    tags:
+        - dev-runner
