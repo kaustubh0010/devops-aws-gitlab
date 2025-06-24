@@ -27,7 +27,7 @@ deploy_job:
     stage: deploy
     script: 
         - echo "This is the deploy stage script on $CI_COMMIT_BRANCH branch for $DEPLOY_ENV environment."
-        - echo "This is $CI_JOB_NAME job logs." > logs/deploy.log
+        - echo "This is $CI_JOB_NAME job logs." >> logs/app.log
     artifacts:
         paths:
             - /logs
