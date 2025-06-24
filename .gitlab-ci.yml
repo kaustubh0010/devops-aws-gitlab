@@ -1,6 +1,7 @@
 stages:
     - build
     - test
+    - push
     - deploy
 
 variables:
@@ -9,27 +10,15 @@ variables:
 build_job:
     stage: build
     script: 
-        - echo "Hello $CI_COMMIT_AUTHOR. This is the build stage script."
+        - echo "Building Docker Image Git SHA: $CI_COMMIT_SHA"
+        #- docker build -t DevOps-Assignment:$CI_COMMIT_SHA
 
 test_job:
     stage: test
     script: 
-        - echo "This is the test stage script. Testing the docker image from $DOCKERHUB_USER user."
-        - mkdir -p logs/
-        - echo "These are $CI_JOB_NAME job logs." > logs/test.log
-        - sleep 10
-    artifacts:
-        paths:
-            - logs/
-        expire_in: 1 week
+        - echo "This is the test stage script. Testing the docker image from $DOCKERHUB_USER user and pass $DOCKERHUB_PASS."
 
 deploy_job:
     stage: deploy
     script: 
         - echo "This is the deploy stage script on $CI_COMMIT_BRANCH."
-        - mkdir -p logs/
-        - echo "This is $CI_JOB_NAME job logs." >> logs/app.log
-    artifacts:
-        paths:
-            - logs/
-        expire_in: 1 week
