@@ -3,19 +3,22 @@ stages:
     - test
     - deploy
 
+variables:
+    DEPLOY_ENV: "development"
+
 build_job:
     stage: build
     script: 
-        - echo 'Hello $GITLAB_USER_LOGIN. This is the build stage script.'
+        - echo "Hello $CI_COMMIT_AUTHOR. This is the build stage script."
 
 test_job:
     stage: test
     script: 
-        - echo 'This is the test stage script.'
+        - echo "This is the test stage script."
         - sleep 10
 
 deploy_job:
     stage: deploy
     script: 
-        - echo 'This is the deploy stage script on $CI_COMMIT_BRANCH branch.'
+        - echo "This is the deploy stage script on $CI_COMMIT_BRANCH branch for $DEPLOY_ENV environment."
     environment: dev
