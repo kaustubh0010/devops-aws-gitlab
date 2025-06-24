@@ -11,7 +11,7 @@ build_backend:
     stage: build
     script: 
         - echo "Building Backend Docker Image - Git SHA $CI_COMMIT_SHA"
-        - docker build -t devOps-assignment-backend:$CI_COMMIT_SHA backend/
+        - docker build -t devops-assignment-backend:$CI_COMMIT_SHA backend/
     tags:
         - dev-runner
 
@@ -19,7 +19,7 @@ build_frontend:
     stage: build
     script: 
         - echo "Building Frontend Docker Image - Git SHA $CI_COMMIT_SHA"
-        - docker build -t devOps-assignment-frontend:$CI_COMMIT_SHA frontend/
+        - docker build -t devops-assignment-frontend:$CI_COMMIT_SHA frontend/
     tags:
         - dev-runner
 
