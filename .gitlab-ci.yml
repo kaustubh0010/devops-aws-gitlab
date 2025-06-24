@@ -10,7 +10,7 @@ variables:
 build_job:
     stage: build
     script: 
-        - echo "Building Docker Image Git SHA: $CI_COMMIT_SHA"
+        - echo "Building Docker Image Git SHA $CI_COMMIT_SHA"
         #- docker build -t DevOps-Assignment:$CI_COMMIT_SHA
 
 test_job:
