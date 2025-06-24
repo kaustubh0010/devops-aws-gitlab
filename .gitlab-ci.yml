@@ -12,13 +12,19 @@ build_job:
     script: 
         - echo "Building Docker Image Git SHA $CI_COMMIT_SHA"
         #- docker build -t DevOps-Assignment:$CI_COMMIT_SHA
+    tags:
+        - dev-runner
 
 test_job:
     stage: test
     script: 
         - echo "This is the test stage script. Testing the docker image from $DOCKERHUB_USER user and pass $DOCKERHUB_PASS."
+    tags:
+        - dev-runner
 
 deploy_job:
     stage: deploy
     script: 
         - echo "This is the deploy stage script on $CI_COMMIT_BRANCH."
+    tags:
+        - dev-runner
