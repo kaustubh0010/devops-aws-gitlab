@@ -15,12 +15,12 @@ test_job:
     stage: test
     script: 
         - echo "This is the test stage script. Testing the docker image from $DOCKERHUB_USER user."
-        - mkdir -p logs
+        - mkdir -p logs/
         - echo "These are $CI_JOB_NAME job logs." > logs/test.log
         - sleep 10
     artifacts:
         paths:
-            - /logs
+            - logs/
         expire_in: 1 week
 
 deploy_job:
@@ -31,5 +31,5 @@ deploy_job:
         - echo "This is $CI_JOB_NAME job logs." >> logs/app.log
     artifacts:
         paths:
-            - /logs
+            - logs/
         expire_in: 1 week
