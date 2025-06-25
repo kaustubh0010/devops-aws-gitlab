@@ -28,7 +28,7 @@ test_job:
     script: 
         - echo "Unit Testing backend with pytest"
         - docker run -d --name unit_test_container devops-assignment-backend:$CI_COMMIT_SHA
-        - docker exec -it unit_test_container bash -c "pytest"
+        - docker exec -i unit_test_container bash -c "pytest"
     tags:
         - dev-runner
 
