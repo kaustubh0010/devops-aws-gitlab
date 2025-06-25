@@ -68,6 +68,6 @@ cleanup_job:
         - docker rmi $DOCKERHUB_USER/devops-assignment-backend:stable
         - docker rmi devops-assignment-frontend:$CI_COMMIT_SHA
         - docker rmi $DOCKERHUB_USER/devops-assignment-frontend:stable
-        - docker rmi $(docker images -f "dangling=true" -q)
+        - docker rmi $(docker images -f "dangling=true" -q) || true
     tags:
         - dev-runner
