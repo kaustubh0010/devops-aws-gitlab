@@ -3,6 +3,7 @@ stages:
     - test
     - push
     - deploy
+    - cleanup
 
 variables:
     DEPLOY_ENV: "development"
@@ -33,9 +34,30 @@ backend_unit_test:
     tags:
         - dev-runner
 
+backend_push_job:
+    stage: push
+    script:
+        - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
+        - docker image tag devops-assignment-backend:$CI_COMMIT_SHA $DOCKERHUB_USER/devops-assignment-backend:stable
+        - docker push $DOCKERHUB_USER/devops-assignment-backend:stable
+
+frontend_push_job:
+    stage: push
+    script:
+        - docker image tag devops-assignment-frontend:$CI_COMMIT_SHA $DOCKERHUB_USER/devops-assignment-frontend:stable
+        - docker push $DOCKERHUB_USER/devops-assignment-frontend:stable
+
 deploy_job:
     stage: deploy
     script: 
         - echo "This is the deploy stage script on $CI_COMMIT_BRANCH."
     tags:
         - dev-runner
+
+cleanup_job:
+    stage: cleanup
+    script:
+        - docker rmi devops-assignment-backend:$CI_COMMIT_SHA
+        - docker rmi devops-assignment-backend:stable
+        - docker rmi devops-assignment-frontend:$CI_COMMIT_SHA
+        - docker rmi devops-assignment-frontend:stable
