@@ -25,10 +25,10 @@ build_frontend:
 
 test_job:
     stage: test
-    image: devops-assignment-backend:$CI_COMMIT_SHA
     script: 
         - echo "Unit Testing backend with pytest"
-        - pytest
+        - docker run -d --name unit_test_container devops-assignment-backend:$CI_COMMIT_SHA
+        - docker exec -it unit_test_container bash -c "pytest"
     tags:
         - dev-runner
 
