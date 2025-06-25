@@ -25,8 +25,10 @@ build_frontend:
 
 test_job:
     stage: test
+    image: devops-assignment-backend:$CI_COMMIT_SHA
     script: 
-        - echo "This is the test stage script. Testing the docker image from $DOCKERHUB_USER user and pass $DOCKERHUB_PASS."
+        - echo "Unit Testing backend with pytest"
+        - pytest
     tags:
         - dev-runner
 
