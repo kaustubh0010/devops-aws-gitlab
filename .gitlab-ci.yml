@@ -4,10 +4,7 @@ stages:
     - push
     - deploy
     - cleanup
-
-variables:
-    DEPLOY_ENV: "development"
-
+    
 build_backend:
     stage: build
     script: 
@@ -40,12 +37,16 @@ backend_push_job:
         - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
         - docker image tag devops-assignment-backend:$CI_COMMIT_SHA $DOCKERHUB_USER/devops-assignment-backend:stable
         - docker push $DOCKERHUB_USER/devops-assignment-backend:stable
+    tags:
+        - dev-runner 
 
 frontend_push_job:
     stage: push
     script:
         - docker image tag devops-assignment-frontend:$CI_COMMIT_SHA $DOCKERHUB_USER/devops-assignment-frontend:stable
         - docker push $DOCKERHUB_USER/devops-assignment-frontend:stable
+    tags:
+        - dev-runner
 
 deploy_job:
     stage: deploy
@@ -61,3 +62,5 @@ cleanup_job:
         - docker rmi devops-assignment-backend:stable
         - docker rmi devops-assignment-frontend:$CI_COMMIT_SHA
         - docker rmi devops-assignment-frontend:stable
+    tags:
+        - dev-runner
