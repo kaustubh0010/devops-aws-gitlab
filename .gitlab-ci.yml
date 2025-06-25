@@ -26,8 +26,14 @@ backend_unit_test:
     script: 
         - echo "Unit Testing backend with pytest"
         - docker run -d --name unit_test_container devops-assignment-backend:$CI_COMMIT_SHA
-        - docker exec -i unit_test_container bash -c "pytest"
+        - docker exec -i unit_test_container bash -c "pytest -vv > /tmp/test_log.txt 2>&1"
+        - mkdir -p logs/
+        - docker cp unit_test_container:/tmp/test_log.txt ./logs/test.log
         - docker stop unit_test_container && docker rm unit_test_container
+    artifacts:
+        when: always
+        paths:
+            - logs/test.log
     tags:
         - dev-runner
 
