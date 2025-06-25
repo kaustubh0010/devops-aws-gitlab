@@ -17,7 +17,7 @@ build_frontend:
     stage: build
     script: 
         - echo "Building Frontend Docker Image - Git SHA $CI_COMMIT_SHA"
-        - docker build -t devops-assignment-frontend:$CI_COMMIT_SHA frontend/
+        - docker build --build-arg NEXT_PUBLIC_API_URL='$SERVER_PUBLIC_URL' -t devops-assignment-frontend:$CI_COMMIT_SHA frontend/
     tags:
         - dev-runner
 
