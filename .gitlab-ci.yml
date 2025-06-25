@@ -4,7 +4,7 @@ stages:
     - push
     - deploy
     - cleanup
-    
+
 build_backend:
     stage: build
     script: 
@@ -59,8 +59,9 @@ cleanup_job:
     stage: cleanup
     script:
         - docker rmi devops-assignment-backend:$CI_COMMIT_SHA
-        - docker rmi devops-assignment-backend:stable
+        - docker rmi $DOCKERHUB_USER/devops-assignment-backend:stable
         - docker rmi devops-assignment-frontend:$CI_COMMIT_SHA
-        - docker rmi devops-assignment-frontend:stable
+        - docker rmi $DOCKERHUB_USER/devops-assignment-frontend:stable
+        - docker rmi $(docker images -f "dangling=true" -q)
     tags:
         - dev-runner
