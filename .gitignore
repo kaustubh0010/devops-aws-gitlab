@@ -6,3 +6,6 @@ cypress*
 .dockerignore
 __pycache__
 out
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
