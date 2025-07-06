@@ -58,8 +58,7 @@ deploy_job:
     stage: deploy
     script: 
         - echo "This is the deploy stage script on $CI_COMMIT_BRANCH."
-        - ssh frontend-server
-        - whoami
+        - ssh frontend-server "whoami"
     tags:
         - dev-runner
 
