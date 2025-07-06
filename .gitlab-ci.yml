@@ -54,11 +54,23 @@ frontend_push_job:
     tags:
         - dev-runner
 
-deploy_job:
+frontend_deploy_job:
     stage: deploy
     script: 
-        - echo "This is the deploy stage script on $CI_COMMIT_BRANCH."
-        - ssh frontend-server "whoami"
+        - echo "Deploying to frontend server"
+        - ssh frontend-server "docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS && docker pull $DOCKERHUB_USER/devops-assignment-frontend:stable"
+        - ssh frontend-server "docker stop frontend-container || true && docker rm frontend-container || true"
+        - ssh frontend-server "docker run -d --name frontend-container --restart always -p 3000:80 $DOCKERHUB_USER/devops-assignment-frontend:stable"
+    tags:
+        - dev-runner
+    
+backend_deploy_job:
+    stage: deploy
+    script: 
+        - echo "Deploying to backend server"
+        - ssh backend-server "docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS && docker pull $DOCKERHUB_USER/devops-assignment-backend:stable"
+        - ssh backend-server "docker stop backend-container || true && docker rm backend-container || true"
+        - ssh backend-server "docker run -d --name backend-container --restart always -p 3000:80 $DOCKERHUB_USER/devops-assignment-backend:stable"
     tags:
         - dev-runner
 
