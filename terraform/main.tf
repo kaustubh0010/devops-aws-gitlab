@@ -71,6 +71,11 @@ resource "aws_route_table_association" "rtb_public_association" {
 resource "aws_route_table" "rtb_private" {
   vpc_id = aws_vpc.main.id
 
+  route {
+    cidr_block = "0.0.0.0/0"
+    network_interface_id = aws_instance.bastion_server.primary_network_interface_id
+  }
+
   tags = {
     Name = "rtb-private"
   }
@@ -110,6 +115,14 @@ resource "aws_security_group" "devops_sg_public" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "Allow traffic to container port 3000 from internet"
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -128,15 +141,64 @@ resource "aws_security_group" "devops_sg_private" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    description     = "Allow SSH from public instance"
+    description     = "Allow SSH from bastion instance"
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
+    security_groups = [aws_security_group.devops_sg_bastion.id]
+  }
+
+  ingress {
+    description = "Allow traffic to container port 8000 from public sg"
+    from_port   = 8000
+    to_port     = 8000
+    protocol    = "tcp"
     security_groups = [aws_security_group.devops_sg_public.id]
+  }
+
+  egress {
+    description = "Allow outbound traffic to bastion host sg"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    security_groups = [aws_security_group.devops_sg_bastion.id]
   }
 
   tags = {
     Name = "private-security-group"
+  }
+}
+
+resource "aws_security_group" "devops_sg_bastion" {
+  name        = "devops-sg-bastion"
+  description = "Security group for bastion instance"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description     = "Allow SSH from My local IP"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    cidr_blocks = [local.my_ip]
+  }
+
+  ingress {
+    description = "Allow all traffic from private subnet"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [var.private_subnet_cidr] 
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  tags = {
+    Name = "bastion-security-group"
   }
 }
 
@@ -148,6 +210,12 @@ resource "aws_instance" "frontend_server" {
   vpc_security_group_ids = [
     aws_security_group.devops_sg_public.id,
   ]
+
+  root_block_device {
+    volume_type = "gp3"
+    volume_size = 8
+    delete_on_termination = true
+  }
 
   tags = {
     Name = var.frontend_instance_name
@@ -164,9 +232,35 @@ resource "aws_instance" "backend_server" {
     aws_security_group.devops_sg_private.id,
   ]
 
+  root_block_device {
+    volume_type = "gp3"
+    volume_size = 8
+    delete_on_termination = true
+  }
+
   tags = {
     Name = var.backend_instance_name
   }
 }
 
+resource "aws_instance" "bastion_server" {
+  ami           = "ami-0f918f7e67a3323f0"
+  instance_type = "t2.micro"
+  key_name      = "aws-key-pair"
+  subnet_id     = aws_subnet.public_subnet.id
+  vpc_security_group_ids = [
+    aws_security_group.devops_sg_bastion.id,
+  ]
+  source_dest_check = false
+
+  root_block_device {
+    volume_type = "gp3"
+    volume_size = 8
+    delete_on_termination = true
+  }
+
+  tags = {
+    Name = var.bastion_instance_name
+  }
+}
 

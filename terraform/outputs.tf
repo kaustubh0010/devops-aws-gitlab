@@ -13,3 +13,7 @@ output "bankend_instance_id" {
   value       = aws_instance.backend_server.id
 }
 
+output "bastion_instance_id" {
+  description = "ID of the Bastion instance"
+  value       = aws_instance.bastion_server.id
+}

@@ -10,6 +10,12 @@ variable "backend_instance_name" {
   default     = "backend-server"
 }
 
+variable "bastion_instance_name" {
+  description = "Value of the Name tag for Bastion aws_instance"
+  type        = string
+  default     = "bastion-server"
+}
+
 variable "vpc_name" {
   description = "Value of the Name tag for aws_vpc"
   type        = string
