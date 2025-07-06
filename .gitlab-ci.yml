@@ -59,7 +59,7 @@ deploy_job:
     script: 
         - echo "This is the deploy stage script on $CI_COMMIT_BRANCH."
         - ssh frontend-server
-        - echo "Connected to frontend server"
+        - whoami
     tags:
         - dev-runner
 
