@@ -77,8 +77,8 @@ backend_deploy_job:
 server_cleanup_job:
     stage: cleanup
     script:
-        - ssh frontend-server "docker rmi $(docker images -f "dangling=true" -q) || true"
-        - ssh backend-server "docker rmi $(docker images -f "dangling=true" -q) || true"
+        - ssh frontend-server "docker rmi $DOCKERHUB_USER/devops-assignment-frontend:stable && docker rmi $(docker images -f "dangling=true" -q) || true"
+        - ssh backend-server "docker rmi $DOCKERHUB_USER/devops-assignment-backend:stable && docker rmi $(docker images -f "dangling=true" -q) || true"
     tags:
         - dev-runner
 
