@@ -70,7 +70,7 @@ backend_deploy_job:
         - echo "Deploying to backend server"
         - ssh backend-server "docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS && docker pull $DOCKERHUB_USER/devops-assignment-backend:stable"
         - ssh backend-server "docker stop backend-container || true && docker rm backend-container || true"
-        - ssh backend-server "docker run -d --name backend-container --restart always -p 3000:80 $DOCKERHUB_USER/devops-assignment-backend:stable"
+        - ssh backend-server "docker run -d --name backend-container --restart always -p 8000:8000 $DOCKERHUB_USER/devops-assignment-backend:stable"
     tags:
         - dev-runner
 
