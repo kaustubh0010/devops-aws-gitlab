@@ -74,7 +74,13 @@ backend_deploy_job:
     tags:
         - dev-runner
 
-cleanup_job:
+server_cleanup_job:
+    stage: cleanup
+    script:
+        - ssh frontend-server "docker rmi $(docker images -f "dangling=true" -q) || true"
+        - ssh backend-server "docker rmi $(docker images -f "dangling=true" -q) || true"
+
+runner_cleanup_job:
     stage: cleanup
     script:
         - docker rmi devops-assignment-backend:$CI_COMMIT_SHA
