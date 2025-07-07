@@ -59,7 +59,7 @@ frontend_deploy_job:
     script: 
         - echo "Deploying to frontend server"
         - ssh frontend-server "docker stop frontend-container || true && docker rm frontend-container || true"
-        - ssh frontend-server "docker rmi $DOCKERHUB_USER/devops-assignment-frontend:stable"
+        - ssh frontend-server "docker rmi $DOCKERHUB_USER/devops-assignment-frontend:stable || true"
         - ssh frontend-server "docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS && docker pull $DOCKERHUB_USER/devops-assignment-frontend:stable"
         - ssh frontend-server "docker run -d --name frontend-container --restart always -p 3000:80 $DOCKERHUB_USER/devops-assignment-frontend:stable"
     tags:
@@ -70,7 +70,7 @@ backend_deploy_job:
     script: 
         - echo "Deploying to backend server"
         - ssh backend-server "docker stop backend-container || true && docker rm backend-container || true"
-        - ssh backend-server "docker rmi $DOCKERHUB_USER/devops-assignment-backend:stable"
+        - ssh backend-server "docker rmi $DOCKERHUB_USER/devops-assignment-backend:stable || true"
         - ssh backend-server "docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS && docker pull $DOCKERHUB_USER/devops-assignment-backend:stable"
         - ssh backend-server "docker run -d --name backend-container --restart always -p 8000:8000 $DOCKERHUB_USER/devops-assignment-backend:stable"
     tags:
