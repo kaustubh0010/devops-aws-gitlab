@@ -1,0 +1,8 @@
+webservers:
+  hosts:
+    frontend-server:
+      ansible_user: ubuntu
+    backend-server:
+      ansible_user: ubuntu
+    bastion-server:
+      ansible_user: ubuntu
