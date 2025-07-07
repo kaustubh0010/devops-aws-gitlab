@@ -1,4 +1,4 @@
-# DevOps Assignment
+# DevOps Project
 
 This project is a full-stack web application with a Next.js frontend and a FastAPI backend. The infrastructure is provisioned on AWS using Terraform, and the servers are configured using Ansible. The entire deployment process is automated with a GitLab CI/CD pipeline.
 
