@@ -58,6 +58,7 @@ frontend_deploy_job:
     stage: deploy
     script: 
         - echo "Deploying to frontend server"
+        - echo ${CI_PROJECT_DIR}
         - ssh frontend-server "docker stop frontend-container || true && docker rm frontend-container || true"
         - ssh frontend-server "docker rmi $DOCKERHUB_USER/devops-assignment-frontend:stable || true"
         - ssh frontend-server "docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS && docker pull $DOCKERHUB_USER/devops-assignment-frontend:stable"
@@ -69,6 +70,7 @@ backend_deploy_job:
     stage: deploy
     script: 
         - echo "Deploying to backend server"
+        - echo ${CI_PROJECT_DIR}
         - ssh backend-server "docker stop backend-container || true && docker rm backend-container || true"
         - ssh backend-server "docker rmi $DOCKERHUB_USER/devops-assignment-backend:stable || true"
         - ssh backend-server "docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS && docker pull $DOCKERHUB_USER/devops-assignment-backend:stable"
