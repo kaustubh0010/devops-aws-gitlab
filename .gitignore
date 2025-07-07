@@ -1,1 +1,11 @@
 README.md
+node_modules
+.next
+venv
+cypress*
+.dockerignore
+__pycache__
+out
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup

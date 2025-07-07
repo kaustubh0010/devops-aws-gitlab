@@ -1,0 +1,6 @@
+- name : Test play
+  hosts: backend-server
+  tasks:
+
+    - name: Ping host
+      ansible.builtin.ping:

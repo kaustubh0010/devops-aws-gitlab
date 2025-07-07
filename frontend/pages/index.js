@@ -31,13 +31,13 @@ export default function Home() {
   return (
     <div className="container">
       <Head>
-        <title>DevOps Assignment</title>
+        <title>DevOps Project</title>
         <meta name="description" content="DevOps Assignment with FastAPI and Next.js" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main>
-        <h1>DevOps Assignment</h1>
+        <h1>DevOps Project</h1>
         <div className="status">
           <p>Status: <span className={status.includes('connected') ? 'success' : 'error'}>{status}</span></p>
         </div>

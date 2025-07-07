@@ -1,0 +1,98 @@
+stages:
+    - build
+    - test
+    - push
+    - deploy
+    - cleanup
+
+build_backend:
+    stage: build
+    script: 
+        - echo "Building Backend Docker Image - Git SHA $CI_COMMIT_SHA"
+        - docker build -t devops-assignment-backend:$CI_COMMIT_SHA backend/
+    tags:
+        - dev-runner
+
+build_frontend:
+    stage: build
+    script: 
+        - echo "Building Frontend Docker Image - Git SHA $CI_COMMIT_SHA"
+        - docker build --build-arg NEXT_PUBLIC_API_URL='' -t devops-assignment-frontend:$CI_COMMIT_SHA frontend/
+    tags:
+        - dev-runner
+
+backend_unit_test:
+    stage: test
+    script: 
+        - echo "Unit Testing backend with pytest"
+        - docker run -d --name unit_test_container devops-assignment-backend:$CI_COMMIT_SHA
+        - docker exec -i unit_test_container bash -c "pytest -vv > /tmp/test_log.txt 2>&1"
+        - mkdir -p logs/
+        - docker cp unit_test_container:/tmp/test_log.txt ./logs/test.log
+        - docker stop unit_test_container && docker rm unit_test_container
+    artifacts:
+        when: always
+        paths:
+            - logs/test.log
+    tags:
+        - dev-runner
+
+backend_push_job:
+    stage: push
+    script:
+        - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
+        - docker image tag devops-assignment-backend:$CI_COMMIT_SHA $DOCKERHUB_USER/devops-assignment-backend:stable
+        - docker push $DOCKERHUB_USER/devops-assignment-backend:stable
+    tags:
+        - dev-runner 
+
+frontend_push_job:
+    stage: push
+    script:
+        - docker image tag devops-assignment-frontend:$CI_COMMIT_SHA $DOCKERHUB_USER/devops-assignment-frontend:stable
+        - docker push $DOCKERHUB_USER/devops-assignment-frontend:stable
+    tags:
+        - dev-runner
+
+frontend_deploy_job:
+    stage: deploy
+    script: 
+        - echo "Deploying to frontend server"
+        - echo ${CI_PROJECT_DIR}
+        - ssh frontend-server "docker stop frontend-container || true && docker rm frontend-container || true"
+        - ssh frontend-server "docker rmi $DOCKERHUB_USER/devops-assignment-frontend:stable || true"
+        - ssh frontend-server "docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS && docker pull $DOCKERHUB_USER/devops-assignment-frontend:stable"
+        - ssh frontend-server "docker run -d --name frontend-container --restart always -p 3000:80 $DOCKERHUB_USER/devops-assignment-frontend:stable"
+    tags:
+        - dev-runner
+    
+backend_deploy_job:
+    stage: deploy
+    script: 
+        - echo "Deploying to backend server"
+        - echo ${CI_PROJECT_DIR}
+        - ssh backend-server "docker stop backend-container || true && docker rm backend-container || true"
+        - ssh backend-server "docker rmi $DOCKERHUB_USER/devops-assignment-backend:stable || true"
+        - ssh backend-server "docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS && docker pull $DOCKERHUB_USER/devops-assignment-backend:stable"
+        - ssh backend-server "docker run -d --name backend-container --restart always -p 8000:8000 $DOCKERHUB_USER/devops-assignment-backend:stable"
+    tags:
+        - dev-runner
+
+server_cleanup_job:
+    stage: cleanup
+    script:
+        - ssh frontend-server "docker rmi $(docker images -f "dangling=true" -q) || true"
+        - ssh backend-server "docker rmi $(docker images -f "dangling=true" -q) || true"
+    tags:
+        - dev-runner
+
+runner_cleanup_job:
+    stage: cleanup
+    script:
+        - docker rmi devops-assignment-backend:$CI_COMMIT_SHA
+        - docker rmi $DOCKERHUB_USER/devops-assignment-backend:stable
+        - docker rmi devops-assignment-frontend:$CI_COMMIT_SHA
+        - docker rmi $DOCKERHUB_USER/devops-assignment-frontend:stable
+        - docker rmi $(docker images -f "dangling=true" -q) || true
+    tags:
+        - dev-runner
